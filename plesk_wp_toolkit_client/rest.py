@@ -76,6 +76,7 @@ class RESTClientObject:
             "ca_certs": configuration.ssl_ca_cert,
             "cert_file": configuration.cert_file,
             "key_file": configuration.key_file,
+            "redirect": False
         }
         if configuration.assert_hostname is not None:
             pool_args['assert_hostname'] = (
