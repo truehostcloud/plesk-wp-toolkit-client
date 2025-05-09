@@ -76,7 +76,6 @@ class RESTClientObject:
             "ca_certs": configuration.ssl_ca_cert,
             "cert_file": configuration.cert_file,
             "key_file": configuration.key_file,
-            "redirect": False
         }
         if configuration.assert_hostname is not None:
             pool_args['assert_hostname'] = (
@@ -98,7 +97,6 @@ class RESTClientObject:
 
         # https pool manager
         self.pool_manager: urllib3.PoolManager
-
         if configuration.proxy:
             if is_socks_proxy_url(configuration.proxy):
                 from urllib3.contrib.socks import SOCKSProxyManager
@@ -186,7 +184,8 @@ class RESTClientObject:
                         body=request_body,
                         timeout=timeout,
                         headers=headers,
-                        preload_content=False
+                        preload_content=False,
+                        redirect=False
                     )
                 elif content_type == 'application/x-www-form-urlencoded':
                     r = self.pool_manager.request(
@@ -196,7 +195,8 @@ class RESTClientObject:
                         encode_multipart=False,
                         timeout=timeout,
                         headers=headers,
-                        preload_content=False
+                        preload_content=False,
+                        redirect=False
                     )
                 elif content_type == 'multipart/form-data':
                     # must del headers['Content-Type'], or the correct
@@ -212,7 +212,8 @@ class RESTClientObject:
                         encode_multipart=True,
                         timeout=timeout,
                         headers=headers,
-                        preload_content=False
+                        preload_content=False,
+                        redirect=False
                     )
                 # Pass a `string` parameter directly in the body to support
                 # other content types than JSON when `body` argument is
@@ -224,7 +225,8 @@ class RESTClientObject:
                         body=body,
                         timeout=timeout,
                         headers=headers,
-                        preload_content=False
+                        preload_content=False,
+                        redirect=False
                     )
                 elif headers['Content-Type'].startswith('text/') and isinstance(body, bool):
                     request_body = "true" if body else "false"
@@ -234,7 +236,8 @@ class RESTClientObject:
                         body=request_body,
                         preload_content=False,
                         timeout=timeout,
-                        headers=headers)
+                        headers=headers,
+                        redirect=False)
                 else:
                     # Cannot generate the request from given parameters
                     msg = """Cannot prepare a request message for provided
@@ -249,7 +252,8 @@ class RESTClientObject:
                     fields={},
                     timeout=timeout,
                     headers=headers,
-                    preload_content=False
+                    preload_content=False,
+                    redirect=False
                 )
         except urllib3.exceptions.SSLError as e:
             msg = "\n".join([type(e).__name__, str(e)])
